@@ -233,6 +233,34 @@ class Client():
 
         return source
 
+    
+    def get_connections(self):
+        url = f"{self.url}/api/v1/connections/list"
+        data = {
+        "workspaceId": self.workspace_id
+        }
+
+        return json.loads(requests.post(url=url,headers=self.headers,data=json.dumps(data)).text)
+
+
+
+    def get_connection(self,connection_id):
+
+        connections = self.get_connections()
+
+        for connection in connections["connections"]:
+            if connection["connectionId"] != connection_id:
+                continue
+
+            break
+
+        
+        return Connection(
+            connection_config=connection
+        )
+
+
+
 
 
 
@@ -285,9 +313,31 @@ class Source():
 class Connection():
     
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self,name=None,catalog=None,name_space_definition=None,
+                name_space_format=None,prefix=None,source_id=None,destination_id=None,
+                operations_ids=None,sync_catalog=None,schedule=None,schedule_data=None,
+                status=None,source_catalog_id=None,geography=None,notify_schema_changes=None,
+                nob_breaking_changes_preference=None) -> None:
 
+
+
+        self.name = name
+        self.catalog = catalog
+        self.name_space_definition = name_space_definition
+        self.name_space_format = name_space_format
+        self.prefix = prefix
+        self.source_id = source_id
+        self.destination_id = destination_id
+        self.operations_id = None
+        self.sync_catalog = sync_catalog
+        self.schedule = schedule
+        self.operations_ids = operations_ids
+        self.schedule_data = schedule_data
+        self.status = status
+        self.source_catalog_id = source_catalog_id
+        self.geography = geography
+        self.notify_schema_changes = notify_schema_changes
+        self.nob_breaking_changes_preference = nob_breaking_changes_preference
 
     def define_connection_config(self):
         pass
