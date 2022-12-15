@@ -120,6 +120,53 @@ class Client():
         return headers
 
 
+    def get_destinations(self):
+        destination_url = f"{self.url}/api/v1/destinations/list"
+        data = {
+            "workspaceId": self.workspace_id
+            }
+        return json.loads(requests.post(url=destination_url,headers=self.headers,data=json.dumps(data)).text)
+
+
+    def get_destination(self,destination_id=None):
+        destinations = self.get_destinations()
+        print(type(destinations))
+        for destination in destinations['sources']:
+            if destination['sourceId'] != destination_id:
+                continue
+
+            break
+
+        return Destination(
+            name=destination['name'],
+            workspace_id=self.active_workspace_id,
+            connection_configuration=destination['connectionConfiguration'],
+            destination_definition_id=destination['destinationDefinitionId']
+            )
+
+
+    def push_destination(self,destination):
+
+        create_destination_url = f"{self.url}/api/v1/destinations/create"
+    
+        destination_configuration = {
+            "destinationDefinitionId":destination.destination_definition_id,
+            "connectionConfiguration":destination.connection_configuration,
+            "workspaceId":destination.workspace_id,
+            "name": destination.name
+        }
+
+
+        response = json.loads(
+            requests.post(url=create_destination_url,headers=self.headers,data=json.dumps(destination_configuration)).text
+        )
+
+        response = json.loads(response.text)
+        destination_id = response['destinationId']
+        destination.destination_id = destination_id
+        destination.destination_template_name = response['destinationName']
+
+        return destination
 
     def get_sources(self):
         source_url = f"{self.url}/api/v1/sources/list"
@@ -134,26 +181,29 @@ class Client():
 
     def get_source(self,source_id=None):
         sources = self.get_sources()
-        print(type(sources))
+
         for source in sources['sources']:
             if source['sourceId'] != source_id:
                 continue
 
-            source_definition_id = source['sourceDefinitionId']
-            source_id = source['sourceId']
-            name = source['name']
-            connection_configuration = source['connectionConfiguration']
-
             break
 
         return Source(
-            name=name,
+            name=source['name'],
             workspace_id=self.active_workspace_id,
-            connection_configuration=connection_configuration,
-            source_definition_id=source_definition_id
+            connection_configuration=source['connectionConfiguration'],
+            source_definition_id=source['sourceDefinitionId']
             )
 
-    
+    def get_source_schema(self,source_id):
+        get_schema_url = f"{self.url}/api/v1/sources/discover_schema"
+
+        data = {
+            "sourceId":source_id
+        }
+
+        return json.loads(requests.post(url=get_schema_url,headers=self.headers,data=json.dumps(data)).text)
+
 
     def push_source(self,source):
         create_source_url = f"{self.url}/api/v1/sources/create"
@@ -174,8 +224,11 @@ class Client():
 
 
         response = json.loads(create_response.text)
-        source.source_id = response['sourceId']
+        source_id = response['sourceId']
+        source.source_id = source_id
         source.source_template_name = response['sourceName']
+        source.schema = get_source_schema(source_id)
+
 
 
         return source
@@ -183,25 +236,50 @@ class Client():
 
 
 
+class Destination():
+    def __init__(self,name=None,workspace_id=None,connection_configuration=None,destination_definition_id=None,destination_id=None,destination_template_name=None) -> None:
+
+        self.name = name
+        self.workspace_id = workspace_id
+        self.connection_configuration = connection_configuration
+        self.destination_definition_id = destination_definition_id
+        self.destination_id = destination_id
+        self.destination_template_name = destination_template_name
 
 
+
+    def copy(self):
+        return Destination(
+            name=self.name,
+            workspace_id=self.workspace_id,
+            connection_configuration=self.connection_configuration,
+            source_definition_id=self.destination_definition_id
+            )
 
 class Source():
-    def __init__(self,name=None,workspace_id=None,connection_configuration=None,source_definition_id=None,source_id=None) -> None:
+    def __init__(self,name=None,workspace_id=None,connection_configuration=None,source_definition_id=None,source_id=None,source_template_name=None,schema=None) -> None:
         
 
         self.name = name
         self.workspace_id = workspace_id
         self.connection_configuration = connection_configuration
         self.source_definition_id = source_definition_id
-        self.source_id = None
-        self.source_template_name = None
-
-    def get_template_config(self):
-        return self.connection_configuration
+        self.source_id = source_id
+        self.source_template_name = source_template_name
+        self.schema = schema
 
 
+    def copy(self):
+        return Source(
+            name=self.name,
+            workspace_id=self.workspace_id,
+            connection_configuration=self.connection_configuration,
+            source_definition_id=self.source_definition_id
+            )
 
+
+    def get_schema(self):
+        return self.schema
 
 
 class Connection():
