@@ -1,2 +1,2 @@
 # squid
-Library for accessing airbyte instance
+Library for accessing airbytes instances programmatically.
