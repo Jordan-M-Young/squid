@@ -260,10 +260,6 @@ class Client():
         )
 
 
-
-
-
-
 class Destination():
     def __init__(self,name=None,workspace_id=None,connection_configuration=None,destination_definition_id=None,destination_id=None,destination_template_name=None) -> None:
 
@@ -313,12 +309,11 @@ class Source():
 class Connection():
     
 
-    def __init__(self,name=None,catalog=None,name_space_definition=None,
-                name_space_format=None,prefix=None,source_id=None,destination_id=None,
-                operations_ids=None,sync_catalog=None,schedule=None,schedule_data=None,
-                status=None,source_catalog_id=None,geography=None,notify_schema_changes=None,
-                nob_breaking_changes_preference=None) -> None:
-
+    def __init__(self,name=None,catalog=None,name_space_definition="source",
+                name_space_format="${SOURCE_NAMESPACE}",prefix="",source_id=None,destination_id=None,
+                operations_ids=[],sync_catalog=None,schedule=None,schedule_data=None,
+                status="active",source_catalog_id=None,geography="auto",notify_schema_changes=True,
+                non_breaking_changes_preference="ignore") -> None:
 
 
         self.name = name
@@ -337,7 +332,7 @@ class Connection():
         self.source_catalog_id = source_catalog_id
         self.geography = geography
         self.notify_schema_changes = notify_schema_changes
-        self.nob_breaking_changes_preference = nob_breaking_changes_preference
+        self.non_breaking_changes_preference = non_breaking_changes_preference
 
     def define_connection_config(self):
         pass
