@@ -1,8 +1,9 @@
 import base64
+from copy import deepcopy
 import requests
 import json
 from squid.connectors import Source, Destination, Connection
-
+import squid.constants as K
 
 class Client():
     def __init__(self,url="http://localhost:8000",user="airbyte",password="password") -> None:
@@ -189,59 +190,28 @@ class Client():
 
         
         return Connection(
-            name=connection.get("name","defaultname"),
-            catalog=connection.get("catalog",{}),
-            name_space_definition=connection.get("namespaceDefinition","source"),
-            name_space_format=connection.get("namespaceFormat","${SOURCE_NAMESPACE}"),
-            prefix=connection.get("prefix",""),
-            source_id=connection.get("sourceId",""),
-            destination_id=connection.get("destinationId",""),
-            operations_ids=connection.get("operationIds",[]),
-            sync_catalog=connection.get("syncCatalog",{}),
-            schedule=connection.get("schedule",{}),
-            schedule_data=connection.get("scheduleData",{}),
-            status=connection.get("status","active"),
-            source_catalog_id=connection.get("sourceCatalogId",""),
-            geography=connection.get("geography","auto"),
-            notify_schema_changes=connection.get("notifySchemaChanges",True),
-            non_breaking_changes_preference=connection.get("nonBreakingChangesPreference","ignore")
+                config=connection
             )
 
 
-    def push_connection(self,source,destination,params=None):
+    def build_connection(self,source,destination,params=None):
 
         source_id = source.source_id
+        source_name = source.name
+
         destination_id = destination.destination_id
+        destination_name = destination.name
         schema = self.get_source_schema(source_id)
         sync_catalog = schema['catalog']
         sync_catalog_id = schema['catalogId']
 
-        connector_data = {
-            "name": "Customer6 Sheet6 <> CustomerTest6",
-            "namespaceDefinition": "source",
-            "namespaceFormat": "${SOURCE_NAMESPACE}",
-            "prefix": " ",
-            "sourceId": source_id,
-            "destinationId": destination_id,
-            "operationIds": [
-            ],
-            "syncCatalog": sync_catalog,
-            "schedule": {
-                "units": 24,
-                "timeUnit": "hours"
-            },
-            "scheduleData": {
-                "basicSchedule": {
-                "timeUnit": "hours",
-                "units": 24
-                }
-            },
-            "status":"active",
-            "sourceCatalogId": sync_catalog_id,
-            "geography": "auto",
-            "notifySchemaChanges": True,
-            "nonBreakingChangesPreference": "ignore"
-            }
+        connector_data = deepcopy(K.CONNECTION_CONFIG_TEMPLATE)
+        connector_data['sourceId'] = source_id
+        connector_data['destinationId'] = destination_id
+        connector_data['syncCatalog'] = sync_catalog
+        connector_data["sourceCatalogId"] = sync_catalog_id
+        connector_data['name'] = f"{source_name} <> {destination_name}"
+
 
         for param, value in params.items():
             if not connector_data.get(param):
@@ -249,10 +219,16 @@ class Client():
 
             connector_data[param] = value
 
-                
+
+        return Connection(config=connector_data)
+
+
+    def push_connection(self,connection):
 
 
         connector_url = f"{self.url}/api/v1/connections/create"
+        connector_data = connection.config
+
         return json.loads(requests.post(
             url=connector_url,
             headers=self.headers,

@@ -1,3 +1,7 @@
+from copy import deepcopy
+import squid.constants as K
+
+
 class Destination():
     def __init__(self,name=None,workspace_id=None,connection_configuration=None,destination_definition_id=None,destination_id=None,destination_template_name=None) -> None:
 
@@ -51,31 +55,36 @@ class Connection():
                 name_space_format="${SOURCE_NAMESPACE}",prefix="",source_id=None,destination_id=None,
                 operations_ids=[],sync_catalog=None,schedule=None,schedule_data=None,
                 status="active",source_catalog_id=None,geography="auto",notify_schema_changes=True,
-                non_breaking_changes_preference="ignore") -> None:
+                non_breaking_changes_preference="ignore",config=None) -> None:
 
+            self.name = name
+            self.catalog = catalog
+            self.namespaceDefinition = name_space_definition
+            self.namespaceFormat = name_space_format
+            self.prefix = prefix
+            self.sourceId = source_id
+            self.destinationId = destination_id
+            self.operationIds = operations_ids
+            self.syncCatalog = sync_catalog
+            self.schedule = schedule
+            self.scheduleData = schedule_data
+            self.status = status
+            self.sourceCatalogId = source_catalog_id
+            self.geography = geography
+            self.notifySchemaChanges = notify_schema_changes
+            self.nonBreakingChangesPreference = non_breaking_changes_preference
+            self.config = config
 
-        self.name = name
-        self.catalog = catalog
-        self.name_space_definition = name_space_definition
-        self.name_space_format = name_space_format
-        self.prefix = prefix
-        self.source_id = source_id
-        self.destination_id = destination_id
-        self.operations_id = None
-        self.sync_catalog = sync_catalog
-        self.schedule = schedule
-        self.operations_ids = operations_ids
-        self.schedule_data = schedule_data
-        self.status = status
-        self.source_catalog_id = source_catalog_id
-        self.geography = geography
-        self.notify_schema_changes = notify_schema_changes
-        self.non_breaking_changes_preference = non_breaking_changes_preference
+            self.define_connection_config()
+
 
     def define_connection_config(self):
-        pass
+        if self.config:
+            return self.config
+        else:
+            self.config = deepcopy(K.CONNECTION_CONFIG_TEMPLATE)
+            for attribute, value in self.get_attributes().items():
+                self.config[attribute] = value
 
-
-    def create_connector(self):
-        pass
-
+    def get_attributes(self):
+        return self.__dict__
