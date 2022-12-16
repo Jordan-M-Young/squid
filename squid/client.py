@@ -1,7 +1,7 @@
 import base64
 import requests
 import json
-from connectors import Source, Destination, Connection
+from squid.connectors import Source, Destination, Connection
 
 
 class Client():
@@ -55,7 +55,7 @@ class Client():
     def get_destinations(self):
         destination_url = f"{self.url}/api/v1/destinations/list"
         data = {
-            "workspaceId": self.workspace_id
+            "workspaceId": self.active_workspace_id
             }
         return json.loads(requests.post(url=destination_url,headers=self.headers,data=json.dumps(data)).text)
 
@@ -63,8 +63,8 @@ class Client():
     def get_destination(self,destination_id=None):
         destinations = self.get_destinations()
         print(type(destinations))
-        for destination in destinations['sources']:
-            if destination['sourceId'] != destination_id:
+        for destination in destinations['destinations']:
+            if destination['destinationId'] != destination_id:
                 continue
 
             break
@@ -93,7 +93,6 @@ class Client():
             requests.post(url=create_destination_url,headers=self.headers,data=json.dumps(destination_configuration)).text
         )
 
-        response = json.loads(response.text)
         destination_id = response['destinationId']
         destination.destination_id = destination_id
         destination.destination_template_name = response['destinationName']
@@ -169,7 +168,7 @@ class Client():
     def get_connections(self):
         url = f"{self.url}/api/v1/connections/list"
         data = {
-        "workspaceId": self.workspace_id
+        "workspaceId": self.active_workspace_id
         }
 
         return json.loads(requests.post(url=url,headers=self.headers,data=json.dumps(data)).text)
@@ -186,7 +185,77 @@ class Client():
 
             break
 
+
+
         
         return Connection(
-            connection_config=connection
-        )
+            name=connection.get("name","defaultname"),
+            catalog=connection.get("catalog",{}),
+            name_space_definition=connection.get("namespaceDefinition","source"),
+            name_space_format=connection.get("namespaceFormat","${SOURCE_NAMESPACE}"),
+            prefix=connection.get("prefix",""),
+            source_id=connection.get("sourceId",""),
+            destination_id=connection.get("destinationId",""),
+            operations_ids=connection.get("operationIds",[]),
+            sync_catalog=connection.get("syncCatalog",{}),
+            schedule=connection.get("schedule",{}),
+            schedule_data=connection.get("scheduleData",{}),
+            status=connection.get("status","active"),
+            source_catalog_id=connection.get("sourceCatalogId",""),
+            geography=connection.get("geography","auto"),
+            notify_schema_changes=connection.get("notifySchemaChanges",True),
+            non_breaking_changes_preference=connection.get("nonBreakingChangesPreference","ignore")
+            )
+
+
+    def push_connection(self,source,destination,params=None):
+
+        source_id = source.source_id
+        destination_id = destination.destination_id
+        schema = self.get_source_schema(source_id)
+        sync_catalog = schema['catalog']
+        sync_catalog_id = schema['catalogId']
+
+        connector_data = {
+            "name": "Customer6 Sheet6 <> CustomerTest6",
+            "namespaceDefinition": "source",
+            "namespaceFormat": "${SOURCE_NAMESPACE}",
+            "prefix": " ",
+            "sourceId": source_id,
+            "destinationId": destination_id,
+            "operationIds": [
+            ],
+            "syncCatalog": sync_catalog,
+            "schedule": {
+                "units": 24,
+                "timeUnit": "hours"
+            },
+            "scheduleData": {
+                "basicSchedule": {
+                "timeUnit": "hours",
+                "units": 24
+                }
+            },
+            "status":"active",
+            "sourceCatalogId": sync_catalog_id,
+            "geography": "auto",
+            "notifySchemaChanges": True,
+            "nonBreakingChangesPreference": "ignore"
+            }
+
+        for param, value in params.items():
+            if not connector_data.get(param):
+                continue
+
+            connector_data[param] = value
+
+                
+
+
+        connector_url = f"{self.url}/api/v1/connections/create"
+        return json.loads(requests.post(
+            url=connector_url,
+            headers=self.headers,
+            data = json.dumps(connector_data)
+            ).text)
+
