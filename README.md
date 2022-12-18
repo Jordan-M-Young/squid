@@ -68,11 +68,25 @@ To view which source type connectors exist within your airbyte instance run the 
 
 ```python
 
-client.get_sources()
+sources_information_dict = client.get_sources()
 
 ```
 
-T
+This will return a dictionary containing all relevant information for each source in your workspace.
+
+To get information on a single source:
+
+```python
+
+source_id = "<MY_SOURCE_ID>"
+
+source_obj = client.get_source(source_id)
+
+```
+
+Which will return a Source class object, with attributes values reflecting the information observed in the dictionary returned from `client.get_sources()`.
+
+*SourceId != SourceDefinitionId, you want the former not the latter.
 
 
 
