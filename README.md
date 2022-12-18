@@ -3,7 +3,7 @@ Library wrapper for airbyte api, for easy programmatic access to your local or c
 
 ## Prerequisites
 
-Just the `requests` library for now.
+- `requests`
 
 ## Installation
 
