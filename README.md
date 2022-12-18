@@ -58,6 +58,15 @@ client.set_active_workspace(work_space_id)
 
 ```
 
+Retrieve your workspace_id at any time by
+
+```python
+
+client.active_workspace_id
+
+```
+
+
 ## Interacting with Connectors
 
 Once you've set your workspace you're ready to interact with connectors! 
