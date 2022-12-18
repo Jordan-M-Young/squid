@@ -1,2 +1,2 @@
 # squid
-Library for accessing airbytes instances programmatically. Use to programmatically implement different configurations of airbyte connections. 
+Library that wraps airbyte api, for easy programmatic access to your local or cloud based airbyte instance(s)
