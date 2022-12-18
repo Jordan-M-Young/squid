@@ -97,7 +97,9 @@ Which will return a Source class object, with attributes values reflecting the i
 
 *SourceId != SourceDefinitionId, you want the former not the latter.
 
+# Why Squid
 
+Airbyte has an octopus mascot (octavia), so a squid companion doesn't seem too far fetched. :sunglasses:
 
 
 # Roadmap
