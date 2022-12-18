@@ -102,6 +102,8 @@ Which will return a Source class object, with attributes values reflecting the i
 
 # Roadmap
 
-Add more functionality around workspaces, jobs, etc. Currently all the functionality is based around pulling exsiting sources/destinations from an instance, modifying them in some way. Combining them into a new connection and pushing the connection. This obviously isn't the only thing you might want to do with your airbyte instance. Help is appreciated!!
+- Testing + Error handling. Currently the code expects that airbyte is configured properly, which might not be true!
 
-Once squid's functionality represents what can be accomplished with airbyte's api, then we'll turn this into a python package.
+- Add more functionality around workspaces, jobs, etc. Currently all the functionality is based around pulling exsiting sources/destinations from an instance, modifying them in some way. Combining them into a new connection and pushing the connection. This obviously isn't the only thing you might want to do with your airbyte instance. Help is appreciated!!
+
+ - Once squid's functionality represents what can be accomplished with airbyte's api, then we'll turn this into a python package.
