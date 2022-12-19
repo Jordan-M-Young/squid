@@ -97,6 +97,40 @@ Which will return a Source class object, with attributes values reflecting the i
 
 *SourceId != SourceDefinitionId, you want the former not the latter.
 
+Modify the source's attributes at your discretion... You'll most likely want to update the name and configuration of your source. In this library connection_configuration holds all the key:value pairs that you would enter when configuring the airbyte connector in the UI.
+
+```python
+
+source_obj.name = '<MODIFIED_SOURCE_NAME>'
+
+source_obj.connection_figuration = {
+     "field1": "<NEW_FIELD_1_VALUE>",
+     "field2":"<NEW_FIELD_2_VALUE>"
+}
+
+```
+
+
+Once you're satisfied with the configuration of your updated source connector, push it to your airbyte instance with:
+
+```python
+
+source_obj = client.push_source(source_obj)
+
+```
+
+If succesful, your source should be visible in your airbyte ui or with the `get_sources` method. Nice! The returned source_obj will be updated with your new source's `source_id` attribute and its `source_schema` attribute, which you'll need for building a connection later.
+
+
+
+
+### Destinations
+
+
+### Connections
+
+
+
 # Why Squid
 
 Airbyte has an octopus mascot (octavia), so a squid companion doesn't seem too far fetched. :sunglasses:
