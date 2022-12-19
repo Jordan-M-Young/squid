@@ -97,7 +97,7 @@ Which will return a Source class object, with attributes values reflecting the i
 
 *SourceId != SourceDefinitionId, you want the former not the latter.
 
-Modify the source's attributes at your discretion... You'll most likely want to update the name and configuration of your source. In this library connection_configuration holds all the key:value pairs that you would enter when configuring the airbyte connector in the UI.
+Modify the source's attributes at your discretion... You'll most likely want to update the name and configuration of your source. In this library a source object's `connection_configuration` attribute holds all the key:value pairs that you would enter when configuring the airbyte connector in the UI.
 
 ```python
 
