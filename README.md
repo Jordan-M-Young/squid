@@ -122,6 +122,8 @@ source_obj = client.push_source(source_obj)
 If succesful, your source should be visible in your airbyte ui or with the `get_sources` method. Nice! The returned source_obj will be updated with your new source's `source_id` attribute and its `source_schema` attribute, which you'll need for building a connection later.
 
 
+**Note: Like all classes you're free to instantiate instances of a Source class object on your own. Make sure you've familiarized yourself with the class and its attributes as well as understanding the configuration of the airbyte source you're emulating!
+
 
 
 ### Destinations
@@ -148,8 +150,6 @@ destination_obj = client.push_destination(destination_obj)
 
 
 ```
-
-
 
 
 
