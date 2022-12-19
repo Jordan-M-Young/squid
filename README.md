@@ -126,6 +126,32 @@ If succesful, your source should be visible in your airbyte ui or with the `get_
 
 ### Destinations
 
+Destination's are similar to sources in this library see the following:
+
+
+```python
+
+# get a dictionary with info on your destinations
+destinations_info_dict = client.get_destinations()
+
+
+# return a destination class object based on a passed destinationId
+destination_obj = client.get_destination(my_destination_id)
+
+#modify the destination configuration and name
+destination_obj.name = new_destination_name
+destination_obj.connector_configuration = {key1:new_val1.....}
+
+
+#push your destination to airbyte
+destination_obj = client.push_destination(destination_obj)
+
+
+```
+
+
+
+
 
 ### Connections
 
