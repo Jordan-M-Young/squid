@@ -214,6 +214,23 @@ Airbyte has an octopus mascot (octavia), so a squid companion doesn't seem too f
 
 # Roadmap
 
+
+- Add Tests [ ]
+- Implement Error Handling in current classes/methods [ ]
+- Add Classes/methods for Workspaces [ ]
+- Add methods to client for jobs [ ]
+- Add methods to update connection state [ ]
+- Add methods to interact with the instance scheduler [ ]
+- Add methods to get logs [ ]
+- Add methods to interact with the web-backend [ ]
+.
+.
+.
+- repo -> python package [ ]
+
+
+
+
 - Testing + Error handling. Currently the code expects that airbyte is configured properly, which might not be true!
 
 - Add more functionality around workspaces, jobs, etc. Currently all the functionality is based around pulling exsiting sources/destinations from an instance, modifying them in some way. Combining them into a new connection and pushing the connection. This obviously isn't the only thing you might want to do with your airbyte instance. Help is appreciated!!
