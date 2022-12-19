@@ -155,6 +155,56 @@ destination_obj = client.push_destination(destination_obj)
 
 ### Connections
 
+Connections are as the name suggests a connection between a source and a destination forming a Extraction and Loading pipeline. We can interact and build connection using this library.
+
+To view information on connections in your workspace, you guessed it:
+
+```python
+
+connection_info_dict = client.get_connections()
+
+```
+
+To return a connection class object, yep:
+
+```python
+
+connection_obj = client.get_connection(connection_id)
+
+```
+
+To create a modified connection you can set the objects attributes like so (see squid/connectors.py for full list of attributes) like so:
+
+```python
+
+connection_obj.name = "NewConnection"
+connection_obj.sourceId = my_source_id
+connection_obj.SyncCatalog = {...}
+
+```
+
+This way works once you've familiarized yourself with the the configuration of connections. The easier way to build a customized connection is to use:
+
+```python
+
+connection_obj = client.build_connection(source_obj,destinatino_obj)
+
+```
+
+Which will return a connection_obj configure with the settings of your newly configured source and destination. Once you're satisfied push your connection to airbyte!
+
+```python
+
+connection_obj = client.push_connection(connection_obj)
+
+```
+
+If you were succesful, congrats! If not, message me or write an issue! If you have suggestions or ideas, lets collab!
+
+
+
+
+
 
 
 # Why Squid
